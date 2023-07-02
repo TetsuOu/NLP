@@ -1,6 +1,6 @@
 import torch
 from data_loader import Mydataloader
-from model import CNN
+from model import CNN,lstm
 
 batch_size = 32
 n_filters = 100
@@ -15,7 +15,8 @@ if __name__ == '__main__':
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     print (f'正在使用计算的是：{device}')
 
-    model = CNN(vocab_dim, n_filters, filter_sizes, dropout)
+    # model = CNN(vocab_dim, n_filters, filter_sizes, dropout)
+    model = lstm(embedding_dim= vocab_dim, hidden_dim=128)
     model = model.to(device)
 
     optimizer = torch.optim.Adam(model.parameters(), lr = lr)
@@ -35,7 +36,8 @@ if __name__ == '__main__':
             target = label.long()
 
             data, target = data.to(device), target.to(device)
-            output = model(data)
+            # output = model(data)
+            output, h_state = model(data)
             correct += int(torch.sum(torch.argmax(output, dim=1) == target))
             total += len(target)
             optimizer.zero_grad()
@@ -48,7 +50,8 @@ if __name__ == '__main__':
         loss = epoch_loss/(batch_idx+1)
         if(acc>best_acc):
             best_acc = acc
-            torch.save(model, f'cnn.pt')
+            # torch.save(model, f'cnn.pt')
+            torch.save(model, f'lstm.pt')
         if(epoch%1==0):
             print(f'Epoch {epoch} accuracy: {acc} best acc: {best_acc} loss: {loss}')
 

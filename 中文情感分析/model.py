@@ -35,3 +35,20 @@ class CNN(nn.Module):
         # cat = [batch_size, n_filters * len(filter_sizes)]
 
         return self.fc(cat)
+
+
+class lstm(nn.Module):
+    def __init__(self, embedding_dim, hidden_dim):
+        super(lstm, self).__init__()
+        self.lstm = nn.LSTM(
+            input_size=embedding_dim,
+            hidden_size=hidden_dim,
+            batch_first=True
+        )
+        self.fc = nn.Linear(hidden_dim, 2)
+
+    def forward(self, x):
+        out, (h_n, c_n) = self.lstm(x)
+        out = out[:,-1,:]
+        out = self.fc(out)
+        return out, h_n

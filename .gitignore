@@ -2,3 +2,4 @@
 *.pt
 **/.idea/
 /temp
+*.bin
